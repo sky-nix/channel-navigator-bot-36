@@ -4,13 +4,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Layouts, Users, Home, Settings, Bell, Menu, X } from 'lucide-react';
+import { LayoutGrid, Users, Home, Settings, Bell, Menu, X } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const navItems = [
   { name: 'Dashboard', path: '/', icon: Home },
-  { name: 'Channels', path: '/channels', icon: Layouts },
+  { name: 'Channels', path: '/channels', icon: LayoutGrid },
   { name: 'Subscribers', path: '/subscribers', icon: Users },
   { name: 'Settings', path: '/settings', icon: Settings },
 ];
