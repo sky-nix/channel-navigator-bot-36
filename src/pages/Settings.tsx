@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,15 +8,30 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Bell, User, Shield, Settings as SettingsIcon, MessageSquare } from 'lucide-react';
+import { Bell, User, Shield, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import { TelegramSetup } from '@/components/telegram-setup';
+
+const STORAGE_KEY = 'telegram_bot_settings';
 
 const Settings = () => {
   const [telegramSettings, setTelegramSettings] = useState({
     botToken: '',
     isConnected: false,
   });
+  
+  // Load saved settings on component mount
+  useEffect(() => {
+    const savedSettings = localStorage.getItem(STORAGE_KEY);
+    if (savedSettings) {
+      try {
+        const parsed = JSON.parse(savedSettings);
+        setTelegramSettings(parsed);
+      } catch (error) {
+        console.error('Error parsing saved Telegram settings:', error);
+      }
+    }
+  }, []);
   
   const handleSaveNotifications = () => {
     toast.success('Notification settings saved');
@@ -31,10 +46,15 @@ const Settings = () => {
   };
   
   const handleSaveTelegramSettings = (data: { botToken: string }) => {
-    setTelegramSettings({
+    const newSettings = {
       botToken: data.botToken,
       isConnected: true,
-    });
+    };
+    
+    setTelegramSettings(newSettings);
+    
+    // Save to localStorage
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
   };
   
   return (
@@ -196,6 +216,29 @@ const Settings = () => {
                   onSave={handleSaveTelegramSettings}
                   currentToken={telegramSettings.botToken}
                 />
+                
+                {telegramSettings.isConnected && (
+                  <div className="mt-6 border-t pt-6">
+                    <h3 className="text-lg font-medium mb-4">Advanced Settings</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label htmlFor="webhook-enabled" className="text-base">Enable Webhook</Label>
+                          <p className="text-sm text-muted-foreground">Receive real-time updates from Telegram</p>
+                        </div>
+                        <Switch id="webhook-enabled" />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label htmlFor="auto-responses" className="text-base">Auto Responses</Label>
+                          <p className="text-sm text-muted-foreground">Automatically respond to common commands</p>
+                        </div>
+                        <Switch id="auto-responses" />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
