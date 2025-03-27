@@ -28,7 +28,7 @@ export function TelegramSetup({ onSave, currentToken = '' }: TelegramSetupProps)
   const form = useForm<z.infer<typeof telegramSetupSchema>>({
     resolver: zodResolver(telegramSetupSchema),
     defaultValues: {
-      botToken: currentToken,
+      botToken: currentToken || '',
     },
   });
 
@@ -38,7 +38,7 @@ export function TelegramSetup({ onSave, currentToken = '' }: TelegramSetupProps)
       // Here we'd verify the bot token with Telegram API
       // For now, we'll just simulate a successful connection
       setTimeout(() => {
-        onSave(data);
+        onSave({ botToken: data.botToken });
         toast.success('Telegram bot connected successfully');
         setIsLoading(false);
       }, 1000);
