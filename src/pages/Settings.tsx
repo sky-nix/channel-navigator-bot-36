@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Layout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,10 +8,16 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Bell, User, Shield, Settings as SettingsIcon } from 'lucide-react';
+import { Bell, User, Shield, Settings as SettingsIcon, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
+import { TelegramSetup } from '@/components/telegram-setup';
 
 const Settings = () => {
+  const [telegramSettings, setTelegramSettings] = useState({
+    botToken: '',
+    isConnected: false,
+  });
+  
   const handleSaveNotifications = () => {
     toast.success('Notification settings saved');
   };
@@ -24,6 +30,13 @@ const Settings = () => {
     toast.success('Security settings saved');
   };
   
+  const handleSaveTelegramSettings = (data: { botToken: string }) => {
+    setTelegramSettings({
+      botToken: data.botToken,
+      isConnected: true,
+    });
+  };
+  
   return (
     <Layout>
       <div className="space-y-6">
@@ -33,7 +46,7 @@ const Settings = () => {
         </div>
         
         <Tabs defaultValue="notifications">
-          <TabsList className="grid grid-cols-3 md:w-[400px]">
+          <TabsList className="grid grid-cols-4 md:w-[500px]">
             <TabsTrigger value="notifications" className="gap-2">
               <Bell className="h-4 w-4" />
               <span className="hidden sm:inline">Notifications</span>
@@ -45,6 +58,10 @@ const Settings = () => {
             <TabsTrigger value="security" className="gap-2">
               <Shield className="h-4 w-4" />
               <span className="hidden sm:inline">Security</span>
+            </TabsTrigger>
+            <TabsTrigger value="telegram" className="gap-2">
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Telegram</span>
             </TabsTrigger>
           </TabsList>
           
@@ -164,6 +181,21 @@ const Settings = () => {
                 <div className="pt-4">
                   <Button onClick={handleSaveSecurity}>Update Security Settings</Button>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="telegram" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Telegram Integration</CardTitle>
+                <CardDescription>Connect your Telegram bot to manage channels and automate messages</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <TelegramSetup 
+                  onSave={handleSaveTelegramSettings}
+                  currentToken={telegramSettings.botToken}
+                />
               </CardContent>
             </Card>
           </TabsContent>
